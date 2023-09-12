@@ -34,10 +34,8 @@ class ConvolutionalStage:
         for i in range(0, self.feature_map_size, self.stride_size) : 
             for j in range(0, self.feature_map_size, self.stride_size) :
                 inputSubset = [input[i][j:(j + self.filter_size)] for i in range(i, i + self.filter_size)]
-                print(inputSubset)
                 feature_map[i][j] = np.sum(np.multiply(inputSubset, filter))
         
-        print(feature_map)
         return feature_map
 
     def calculate(self) :
