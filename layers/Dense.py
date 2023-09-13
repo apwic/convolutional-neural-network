@@ -19,10 +19,12 @@ class DenseLayer:
     
     def setInput(self, inputs: np.ndarray):
         self.inputs = inputs.ravel()
-        self.weights: np.ndarray = np.random.rand(len(inputs.ravel()), self.units)
+
+        if (len(self.weights) == 0):
+            self.weights: np.ndarray = np.random.rand(len(inputs.ravel()), self.units)
 
     def setWeight(self, weights: np.ndarray):
-        self.weights = np.ones((self.inputs, self.units)) * weights
+        self.weights = weights
 
     def relu(self, val):
         return np.maximum(0, val)

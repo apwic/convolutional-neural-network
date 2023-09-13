@@ -32,7 +32,7 @@ class ConvolutionalStage:
         return self.feature_maps
     
     def setParams(self, weights = np.ndarray):
-        self.filters = np.ones((self.number_of_filter, self.filter_size, self.filter_size)) * weights
+        self.filters = weights
 
     def resetParams(self):
         self.filters = np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)
@@ -63,10 +63,9 @@ class ConvolutionalStage:
             feature_map: np.ndarray
             for filter in self.filters : 
                 feature_map = self.convolve(self.inputs[i], filter)
-
-            if (i == 0):
                 self.feature_maps.append(feature_map)
-            else:
+
+            if (i != 0):
                 self.feature_maps += feature_map
         
         self.feature_maps = np.array(self.feature_maps)

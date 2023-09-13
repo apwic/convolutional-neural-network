@@ -33,6 +33,9 @@ class ConvolutionLayer:
     def setInputs(self, inputs: np.ndarray):
         self.inputs = inputs
 
+    def setWeights(self, weights: np.ndarray):
+        self.convolutionStage.setParams(weights=weights)
+
     def setConvolutionStage(
         self,
         input_size: int,
@@ -50,7 +53,7 @@ class ConvolutionLayer:
         )
 
         # randomize the params
-        self.convolutionStage.setParams()
+        self.convolutionStage.resetParams()
     
     def setDetectorStage(
         self,
