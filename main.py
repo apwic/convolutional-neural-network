@@ -1,4 +1,4 @@
-from modules import Convolutional, Detector, Pooling
+from modules import Convolutional, Detector, Pooling, Flatten
 
 def main() :
     inputMatr = [[1,2,3], [4,5,6], [7,8,9]]
@@ -6,7 +6,7 @@ def main() :
     print(inputMatr)
 
     print("\n\nCONVOLUTIONAL STAGE\n--------")
-    conv = Convolutional.ConvolutionalStage(3, 2, 1, 5)
+    conv = Convolutional.ConvolutionalStage(3, 2, 1, 2)
     conv.resetParams()
     conv.setInput(inputMatr)
     conv.addPadding()
@@ -28,6 +28,13 @@ def main() :
     pooling.calculate()
     print("Processed feature maps:")
     print(pooling.feature_maps)
+
+    print("\n\nFLATTEN STAGE\n--------")
+    flatten = Flatten.FlattenLayer(pooling.feature_map_size)
+    flatten.setInput(pooling.feature_maps)
+    flatten.flatten()
+    print("Flattened feature maps:")
+    print(flatten.ouputs)
     
 if __name__ == "__main__":
     main()
