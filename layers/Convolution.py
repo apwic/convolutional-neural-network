@@ -36,7 +36,7 @@ class ConvolutionLayer:
         )
 
         # randomize the params
-        self.convolutionStage.resetParams()
+        self.convolutionStage.setParams()
     
     def setDetectorStage(
         self,
@@ -74,3 +74,4 @@ class ConvolutionLayer:
 
         # Set the output from pooling stage
         self.output = self.poolingStage.getOutput()
+        print(self.output)
