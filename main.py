@@ -1,5 +1,4 @@
-from Convolutional import * 
-from Detector import *
+from modules import Convolutional, Detector
 
 def main() :
     inputMatr = [[1,2,3], [4,5,6], [7,8,9]]
@@ -7,7 +6,7 @@ def main() :
     print(inputMatr)
 
     print("\n\nCONVOLUTIONAL STAGE\n--------")
-    conv = ConvolutionalStage(3, 2, 1)
+    conv = Convolutional.ConvolutionalStage(3, 2, 1)
     conv.resetParams()
     conv.setInput(inputMatr)
     conv.calculate()
@@ -17,7 +16,7 @@ def main() :
     print(conv.feature_maps)
     
     print("\n\nDETECTOR STAGE\n--------")
-    detector = DetectorStage(conv.feature_maps)
+    detector = Detector.DetectorStage(conv.feature_maps)
     detector.detect()
     print("Processed feature maps:")
     print(detector.processed_feature_maps)
