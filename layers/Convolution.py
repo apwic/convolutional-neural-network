@@ -7,17 +7,31 @@ from modules.Pooling import PoolingStage
 class ConvolutionLayer:
     def __init__(
         self,
-        inputs: np.ndarray,
+        input_size: int,
+        filter_size_conv: int,
+        number_of_filter_conv: int,
+        filter_size_pool: int,
+        stride_size_conv: int = 1,
+        stride_size_pool: int = 1,
+        padding_size: int = 0,
+        mode: int = PoolingMode.POOLING_MAX # default mode MAX 
     ) -> None:
         self.convolutionStage: ConvolutionalStage = None
         self.detectorStage: DetectorStage = None
         self.poolingStage: PoolingStage = None
 
-        self.inputs = inputs
+        self.setConvolutionStage(input_size, filter_size_conv, number_of_filter_conv, padding_size, stride_size_conv)
+        self.setDetectorStage()
+        self.setPoolingStage(filter_size_pool, stride_size_pool, mode)
+
+        self.inputs: np.ndarray = None
         self.output: np.ndarray = None
 
     def __str__(self) -> str:
         return f"\nCONVOLUTION LAYER\n--------\nInput: {self.inputs}\n\nOutput: {self.output}\n"
+
+    def setInputs(self, inputs: np.ndarray):
+        self.inputs = inputs
 
     def setConvolutionStage(
         self,
@@ -61,6 +75,7 @@ class ConvolutionLayer:
     def calculate(self):
         # Calculate for each stage and pass the output
         self.convolutionStage.setInput(self.inputs)
+        print(self.convolutionStage)
         self.convolutionStage.calculate()
         print(self.convolutionStage)
 

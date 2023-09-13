@@ -11,3 +11,6 @@ class DenseLayer:
     
     def setInput():
         pass
+
+    def calculate():
+        return 'tai'

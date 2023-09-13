@@ -1,5 +1,7 @@
 from enums.enums import PoolingMode
 from layers.Convolution import ConvolutionLayer
+from layers.Flatten import FlattenLayer
+from Sequential import Sequential
 
 def main() :
     inputMatr = [[[1,2,3], [4,5,6], [7,8,9]], 
@@ -29,6 +31,7 @@ def main() :
     convLayer.calculate()
 
     print(convLayer)
+
     
 if __name__ == "__main__":
     main()
