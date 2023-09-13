@@ -9,4 +9,5 @@ class DenseLayer:
         self.unit = unit
         self.activation_function = activation_function
     
-    def setInput()
+    def setInput():
+        pass

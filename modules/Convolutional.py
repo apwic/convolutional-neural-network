@@ -22,8 +22,14 @@ class ConvolutionalStage:
         self.feature_map_size = (self.input_size - self.filter_size + 2 * self.padding_size) // self.stride_size + 1
         self.feature_maps: np.ndarray = []
 
+    def __str__(self) -> str:
+        return f"\nCONVOLUTION STAGE\n--------\nInput: {self.inputs}\n\nOutput: {self.feature_maps}\n"
+
     def setInput(self, input: np.ndarray) :
         self.inputs = input
+
+    def getOutput(self):
+        return self.feature_maps
 
     def resetParams(self):
         self.filters = np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)
