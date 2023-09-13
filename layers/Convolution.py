@@ -78,7 +78,6 @@ class ConvolutionLayer:
     def calculate(self):
         # Calculate for each stage and pass the output
         self.convolutionStage.setInput(self.inputs)
-        print(self.convolutionStage)
         self.convolutionStage.calculate()
         print(self.convolutionStage)
 

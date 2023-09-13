@@ -60,12 +60,11 @@ class ConvolutionalStage:
 
     def calculate(self) :
         for i in range(len(self.inputs)):
-            feature_map: np.ndarray
+            feature_map = []
             for filter in self.filters : 
-                feature_map = self.convolve(self.inputs[i], filter)
-                self.feature_maps.append(feature_map)
+                feature_map.append(self.convolve(self.inputs[i], filter))
 
+            if (i == 0):
+                self.feature_maps = np.array(feature_map)
             if (i != 0):
                 self.feature_maps += feature_map
-        
-        self.feature_maps = np.array(self.feature_maps)
