@@ -12,7 +12,7 @@ class DenseLayer:
         self.inputs: np.ndarray = []
         self.outputs: np.ndarray = []
         self.weights: np.ndarray = []
-        self.biases = np.ones((1, units))
+        self.biases = np.zeros((1, units))
     
     def __str__(self):
         return f"\nDENSE LAYER\n--------\nInput: {self.inputs}\n\nOutput: {self.outputs}\n"

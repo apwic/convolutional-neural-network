@@ -5,10 +5,8 @@ from layers.Flatten import FlattenLayer
 from Sequential import Sequential
 
 def main() :
-    inputMatr = [[[1,2,3], [4,5,6], [7,8,9], [7,8,9]], 
-                 [[2,4,6], [8,10,12], [14,16,18], [7,8,9]],
-                 [[1,2,3], [4,5,6], [7,8,9], [7,8,9]], 
-                 [[2,4,6], [8,10,12], [14,16,18], [7,8,9]]]
+    inputMatr =[[[1,2,3], [4,5,6], [7,8,9]], 
+                 [[2,4,6], [8,10,12], [14,16,18]]]
     print("Input:")
     print(inputMatr)
 
@@ -16,7 +14,7 @@ def main() :
     convLayer = ConvolutionLayer(inputs=inputMatr)
 
     convLayer.setConvolutionStage(
-        input_size=4,
+        input_size=3,
         filter_size=2,
         number_of_filter=1,
         padding_size=0,
