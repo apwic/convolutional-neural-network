@@ -9,7 +9,10 @@ class FlattenLayer:
         self.inputs: np.ndarray = None
 
         self.output_size = input_size * input_size
-        self.ouputs: np.ndarray = None
+        self.outputs: np.ndarray = None
+
+    def __str__(self):
+        return f"\nFLATTEN LAYER\n--------\nInput: {self.inputs}\n\nOutput: {self.outputs}\n"
     
     def setInput(self, inputs: np.ndarray):
         self.inputs = inputs
@@ -20,4 +23,4 @@ class FlattenLayer:
             for i in range(0, self.input_size):
                 flattened_inputs.append(feature_map[i])
                 
-        self.ouputs = np.concatenate(flattened_inputs)
+        self.outputs = np.concatenate(flattened_inputs)
