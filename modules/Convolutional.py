@@ -41,4 +41,5 @@ class ConvolutionalStage:
     def calculate(self) :
         for filter in self.filters : 
             feature_map = self.convolve(self.inputs, filter)
-            self.feature_maps = np.append(self.feature_maps, feature_map)
+            self.feature_maps.append(feature_map)
+        self.feature_maps = np.array(self.feature_maps)
