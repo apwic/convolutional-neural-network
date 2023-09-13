@@ -28,6 +28,17 @@ class ConvolutionalStage:
     def resetParams(self):
         self.filters = np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)
 
+    def addPadding(self):
+        padded_inputs = np.zeros((self.input_size + 2 * self.padding_size, self.input_size + 2 * self.padding_size), dtype=float)
+
+        for i in range(0, self.input_size):
+            for j in range(0, self.input_size):
+                padded_inputs[i + self.padding_size][j + self.padding_size] = self.inputs[i][j]
+        
+        self.inputs = padded_inputs
+
+        print(self.inputs)
+
     def convolve(self, input, filter) :
         feature_map = np.zeros((self.feature_map_size, self.feature_map_size), dtype=float)
 

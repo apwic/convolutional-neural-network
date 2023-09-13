@@ -6,9 +6,11 @@ def main() :
     print(inputMatr)
 
     print("\n\nCONVOLUTIONAL STAGE\n--------")
-    conv = Convolutional.ConvolutionalStage(3, 2, 1)
+    conv = Convolutional.ConvolutionalStage(3, 2, 1, 5)
     conv.resetParams()
     conv.setInput(inputMatr)
+    conv.addPadding()
+
     conv.calculate()
     print("Filters:")
     print(conv.filters)
