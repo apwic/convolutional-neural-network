@@ -39,3 +39,4 @@ class DenseLayer:
             self.outputs = self.sigmoid(z)
         else:
             raise ValueError("Activation function out of tubes scope yeah")
+        print(self)
