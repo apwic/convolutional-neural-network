@@ -2,6 +2,7 @@ from enums.enums import ActivationFunction, PoolingMode
 from layers.Convolution import ConvolutionLayer
 from layers.Dense import DenseLayer
 from layers.Flatten import FlattenLayer
+from Sequential import Sequential
 
 def main() :
     inputMatr = [[[1,2,3], [4,5,6], [7,8,9], [7,8,9]], 
