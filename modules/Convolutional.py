@@ -31,8 +31,8 @@ class ConvolutionalStage:
     def getOutput(self):
         return self.feature_maps
     
-    def setParams(self, weight=0.5):
-        self.filters = np.full((self.number_of_filter, self.filter_size, self.filter_size), weight)
+    def setParams(self, weights = np.ndarray):
+        self.filters = np.ones((self.number_of_filter, self.filter_size, self.filter_size)) * weights
 
     def resetParams(self):
         self.filters = np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)
