@@ -1,4 +1,4 @@
-from enums.enums import ActivationFunction
+from enums.enums import ActivationFunction, DenseLayerType
 import numpy as np
 
 class DenseLayer:
@@ -13,6 +13,12 @@ class DenseLayer:
         self.output: np.ndarray = []
         self.weights: np.ndarray = []
         self.biases = np.zeros((1, units))
+
+        #backprop attributes
+        self.delta_w = np.zeros((len(self.input), units))
+        self.delta_b = np.zeros((1, units))
+        self.error_unit = np.zeros(units)
+        self.net: np.ndarray = []
     
     def __str__(self):
         return f"\nDENSE LAYER\n--------\nInput: {self.input}\n\nOutput: {self.output}\n"
@@ -32,14 +38,22 @@ class DenseLayer:
     def getOutput(self):
         return self.output
 
-    def relu(self, val):
+    def relu(self, val, deriv=False):
+        if (deriv):
+            return np.where(val <= 0, 0, 1)
+        
         return np.maximum(0, val)
     
-    def sigmoid(self, val):
+    def sigmoid(self, val, deriv=False):
+        if (deriv):
+            sigmoid_x = 1 / (1 + np.exp(-val))
+            return sigmoid_x * (1 - sigmoid_x)
+        
         return 1 / (1 + np.exp(-val))
 
     def forward(self):
         z = np.dot(self.input, self.weights) + self.biases
+        self.net = z
 
         if (self.activation_function == ActivationFunction.RELU):
             self.output = self.relu(z)
@@ -47,4 +61,34 @@ class DenseLayer:
             self.output = self.sigmoid(z)
         else:
             raise ValueError("Activation function out of tubes scope yeah")
-        print(self)
+
+    def dE_dO(self, target):
+        return (-(target - self.output))
+
+    def dO_dNet(self, net):
+        if (self.activation_function == ActivationFunction.RELU):
+            return self.relu(net, True)
+        elif (self.activation_function == ActivationFunction.SIGMOID):
+            return self.sigmoid(net, True)
+        else:
+            raise ValueError("Activation function out of tubes scope yeah")
+
+    def backprop_output(self, target):
+        dE_dO = self.dE_dO(target)
+        dO_dNet = self.dO_dNet(self.net)
+        dNet_dW = self.input
+
+        self.delta_w = dE_dO * dO_dNet * np.transpose(np.array([dNet_dW]))
+        self.delta_b = (dE_dO * dO_dNet)
+        
+        return np.sum((self.delta_b * self.weights), axis=1)
+        
+    def backprop_hidden(self, dE_dIn):
+        dE_dO = dE_dIn
+        dO_dNet = self.dO_dNet(self.net)
+        dNet_dW = self.input
+
+        self.delta_w = dE_dO * dO_dNet * np.transpose(np.array([dNet_dW]))
+        self.delta_b = (dE_dO * dO_dNet)
+
+        return np.sum((self.delta_b * self.weights), axis=1)

@@ -41,3 +41,6 @@ class Sequential:
             curr_input = layer.getOutput()
         
         self.output = curr_input
+
+    def train(self):
+        pass
