@@ -26,6 +26,9 @@ class DenseLayer:
     def setWeight(self, weights: np.ndarray):
         self.weights = weights
 
+    def setBiases(self, biases: np.ndarray):
+        self.biases = biases
+
     def relu(self, val):
         return np.maximum(0, val)
     

@@ -16,6 +16,8 @@ class ConvolutionalStage:
         self.number_of_filter = number_of_filter
         self.filters: np.ndarray = None
 
+        self.biases = np.zeros(self.number_of_filter)
+
         self.padding_size = padding_size
         self.stride_size = stride_size
 
@@ -34,6 +36,9 @@ class ConvolutionalStage:
     def setParams(self, weights = np.ndarray):
         self.filters = weights
 
+    def setBiases(self, biases = np.ndarray):
+        self.biases = biases
+
     def resetParams(self):
         self.filters = np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)
 
@@ -48,7 +53,7 @@ class ConvolutionalStage:
 
         print(self.inputs)
 
-    def convolve(self, input, filter) :
+    def convolve(self, input, filter, bias) :
         feature_map = np.zeros((self.feature_map_size, self.feature_map_size), dtype=float)
 
         for i in range(0, self.feature_map_size, self.stride_size) : 
@@ -61,8 +66,10 @@ class ConvolutionalStage:
     def calculate(self) :
         for i in range(len(self.inputs)):
             feature_map = []
+            b = 0
             for filter in self.filters : 
-                feature_map.append(self.convolve(self.inputs[i], filter))
+                feature_map.append(self.convolve(self.inputs[i], filter, self.biases[b]))
+                b += 1
 
             if (i == 0):
                 self.feature_maps = np.array(feature_map)
