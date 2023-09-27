@@ -7,10 +7,10 @@ class PoolingStage:
         filter_size: int,
         stride_size: int = 1,
         mode: int = PoolingMode.POOLING_MAX, # default mode MAX
-        inputs: np.ndarray = None
+        input: np.ndarray = None
     ) -> None:
-        self.inputs: np.ndarray = inputs
-        self.input_size = inputs[0].shape[0] if self.inputs else 0
+        self.input: np.ndarray = input
+        self.input_size = input[0].shape[0] if self.input else 0
         
         self.filter_size = filter_size
         self.stride_size = stride_size
@@ -21,11 +21,11 @@ class PoolingStage:
         self.feature_map_size = (self.input_size - self.filter_size) // self.stride_size + 1
 
     def __str__(self) -> str:
-        return f"\nPOOLING STAGE\n--------\nInput: {self.inputs}\n\nOutput: {self.feature_maps}\n"
+        return f"\nPOOLING STAGE\n--------\nInput: {self.input}\n\nOutput: {self.feature_maps}\n"
 
-    def setInput(self, inputs):
-        self.inputs = inputs
-        self.input_size = inputs[0].shape[0]
+    def setInput(self, input):
+        self.input = input
+        self.input_size = input[0].shape[0]
         self.feature_map_size = (self.input_size - self.filter_size) // self.stride_size + 1
 
     def getOutput(self):
@@ -53,7 +53,7 @@ class PoolingStage:
         return feature_map
 
     def calculate(self):
-        for input in self.inputs:
+        for input in self.input:
             feature_map = self.convolve(input)
             self.feature_maps.append(feature_map)
 

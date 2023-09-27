@@ -10,7 +10,7 @@ class ConvolutionalStage:
         stride_size: int = 1
     ) -> None:
         self.input_size = input_size
-        self.inputs: np.ndarray = None
+        self.input: np.ndarray = None
 
         self.filter_size = filter_size
         self.number_of_filter = number_of_filter
@@ -25,10 +25,10 @@ class ConvolutionalStage:
         self.feature_maps: np.ndarray = []
 
     def __str__(self) -> str:
-        return f"\nCONVOLUTION STAGE\n--------\nInput: {self.inputs}\n\nOutput: {self.feature_maps}\n"
+        return f"\nCONVOLUTION STAGE\n--------\nInput: {self.input}\n\nOutput: {self.feature_maps}\n"
 
     def setInput(self, input: np.ndarray) :
-        self.inputs = input
+        self.input = input
 
     def getOutput(self):
         return self.feature_maps
@@ -47,11 +47,11 @@ class ConvolutionalStage:
 
         for i in range(0, self.input_size):
             for j in range(0, self.input_size):
-                padded_inputs[i + self.padding_size][j + self.padding_size] = self.inputs[i][j]
+                padded_inputs[i + self.padding_size][j + self.padding_size] = self.input[i][j]
         
-        self.inputs = padded_inputs
+        self.input = padded_inputs
 
-        print(self.inputs)
+        print(self.input)
 
     def convolve(self, input, filter, bias) :
         feature_map = np.zeros((self.feature_map_size, self.feature_map_size), dtype=float)
@@ -64,12 +64,10 @@ class ConvolutionalStage:
         return feature_map
 
     def calculate(self) :
-        for i in range(len(self.inputs)):
+        for i in range(len(self.input)):
             feature_map = []
-            b = 0
-            for filter in self.filters : 
-                feature_map.append(self.convolve(self.inputs[i], filter, self.biases[b]))
-                b += 1
+            for idx_f in range(len(self.filters)) : 
+                feature_map.append(self.convolve(self.input[i], self.filters[idx_f], self.biases[idx_f]))
 
             if (i == 0):
                 self.feature_maps = np.array(feature_map)

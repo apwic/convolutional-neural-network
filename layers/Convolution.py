@@ -24,14 +24,14 @@ class ConvolutionLayer:
         self.setDetectorStage()
         self.setPoolingStage(filter_size_pool, stride_size_pool, mode)
 
-        self.inputs: np.ndarray = None
+        self.input: np.ndarray = None
         self.output: np.ndarray = None
 
     def __str__(self) -> str:
-        return f"\nCONVOLUTION LAYER\n--------\nInput: {self.inputs}\n\nOutput: {self.output}\n"
+        return f"\nCONVOLUTION LAYER\n--------\nInput: {self.input}\n\nOutput: {self.output}\n"
 
-    def setInputs(self, inputs: np.ndarray):
-        self.inputs = inputs
+    def setInput(self, input: np.ndarray):
+        self.input = input
 
     def setWeights(self, weights: np.ndarray):
         self.convolutionStage.setParams(weights=weights)
@@ -77,7 +77,7 @@ class ConvolutionLayer:
 
     def calculate(self):
         # Calculate for each stage and pass the output
-        self.convolutionStage.setInput(self.inputs)
+        self.convolutionStage.setInput(self.input)
         self.convolutionStage.calculate()
         print(self.convolutionStage)
 
