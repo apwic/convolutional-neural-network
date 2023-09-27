@@ -19,7 +19,7 @@ def main() :
                                  filter_size_pool=3
                                  )
 
-    denseLayer1 = DenseLayer(2, ActivationFunction.RELU)
+    denseLayer1 = DenseLayer(1, ActivationFunction.RELU)
 
     model = Sequential()
     model.setInput(inputMatr)

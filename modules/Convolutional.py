@@ -59,7 +59,7 @@ class ConvolutionalStage:
         for i in range(0, self.feature_map_size, self.stride_size) : 
             for j in range(0, self.feature_map_size, self.stride_size) :
                 inputSubset = [input[i][j:(j + self.filter_size)] for i in range(i, i + self.filter_size)]
-                feature_map[i][j] = np.sum(np.multiply(inputSubset, filter))
+                feature_map[i][j] = np.sum(np.multiply(inputSubset, filter)) + bias
         
         return feature_map
 
