@@ -93,19 +93,21 @@ class ConvolutionalStage:
 
         # Compute gradient with respect to filters
         for f in range(self.number_of_filter):
-            for i in range(0, self.input_size - self.filter_size + 1):
-                for j in range(0, self.input_size - self.filter_size + 1):
-                    receptive_field = self.input[0, i:i+self.filter_size, j:j+self.filter_size]
-                    dL_dFilters[f] += dL_dOut[f, i, j] * receptive_field
+            for d in range(self.input.shape[0]):
+                for i in range(0, self.input_size - self.filter_size + 1):
+                    for j in range(0, self.input_size - self.filter_size + 1):
+                        receptive_field = self.input[d, i:i+self.filter_size, j:j+self.filter_size]
+                        dL_dFilters[f] += dL_dOut[f, i, j] * receptive_field
 
         # Compute gradient with respect to biases
         dL_dBiases = np.sum(dL_dOut, axis=(0, 1))
 
         # Compute gradient with respect to input
         for f in range(self.number_of_filter):
-            for i in range(0, self.input_size - self.filter_size + 1, self.stride_size):
-                for j in range(0, self.input_size - self.filter_size + 1, self.stride_size):
-                    dL_dInput[0, i:i+self.filter_size, j:j+self.filter_size] += dL_dOut[f, i//self.stride_size, j//self.stride_size] * self.filters[f]
+            for d in range(self.input.shape[0]):
+                for i in range(0, self.input_size - self.filter_size + 1, self.stride_size):
+                    for j in range(0, self.input_size - self.filter_size + 1, self.stride_size):
+                        dL_dInput[d, i:i+self.filter_size, j:j+self.filter_size] += dL_dOut[f, i//self.stride_size, j//self.stride_size] * self.filters[f]
 
         
         # Store gradients for updating weights and biases
