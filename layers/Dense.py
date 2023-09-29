@@ -17,7 +17,6 @@ class DenseLayer:
         #backprop attributes
         self.delta_w = np.zeros((len(self.input), units))
         self.delta_b = np.zeros((1, units))
-        self.error_unit = np.zeros(units)
         self.net: np.ndarray = []
     
     def __str__(self):

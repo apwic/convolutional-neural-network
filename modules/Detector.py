@@ -17,10 +17,26 @@ class DetectorStage:
     def getOutput(self):
         return self.feature_maps
 
-    def activation_function(self, feature):
+    def activation_function(self, feature, deriv=False):
+        if (deriv):
+            return np.where(feature <= 0, 0, 1)
+        
         return np.maximum(0, feature)
     
     def calculate(self):
         for feature_map in self.input:
             self.feature_maps.append(np.array([self.activation_function(feature) for feature in feature_map]))
         self.feature_maps = np.array(self.feature_maps)
+
+    def backprop(self, dL_dOut):
+        """
+        Backpropagation for the detector stage.
+        
+        Parameters:
+        - dL_dOut: Gradient with respect to the output of the detector stage.
+        
+        Returns:
+        - dL_dInput: Gradient with respect to the input of the detector stage.
+        """
+        dL_dInput = dL_dOut * self.activation_function(self.input, deriv=True)
+        return dL_dInput

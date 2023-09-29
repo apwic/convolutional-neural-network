@@ -91,4 +91,15 @@ class ConvolutionLayer:
 
         # Set the output from pooling stage
         self.output = self.poolingStage.getOutput()
-        print(self.output)
+
+    def backprop(self, dE_dIn):
+        dE_dPooling = self.poolingStage.backprop(dE_dIn)
+        print(f"dE_dPooling:\n {dE_dPooling}\n")
+        dE_dDetector = self.detectorStage.backprop(dE_dPooling)
+        print(f"dE_dDetector:\n {dE_dDetector}\n")
+        dE_dConv = self.convolutionStage.backprop(dE_dDetector)
+        print(f"dE_dConv:\n {dE_dConv}\n")
+
+        print(f"dL_dFilter:\n{self.convolutionStage.delta_filters}\n")
+
+        return dE_dConv

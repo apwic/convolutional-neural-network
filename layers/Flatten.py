@@ -17,6 +17,9 @@ class FlattenLayer:
     def setInput(self, input: np.ndarray):
         self.input = input
 
+    def getOutput(self):
+        return self.output
+
     def flatten(self):
         flattened_inputs = []
         for feature_map in self.input:
@@ -24,3 +27,8 @@ class FlattenLayer:
                 flattened_inputs.append(feature_map[i])
                 
         self.output = np.concatenate(flattened_inputs)
+
+    def backprop(self, dL_dOut):
+        dL_df = dL_dOut.reshape(self.input.shape) 
+
+        return dL_df

@@ -58,3 +58,27 @@ class PoolingStage:
             self.feature_maps.append(feature_map)
 
         self.feature_maps = np.array(self.feature_maps)
+
+    def backprop(self, dL_dOut):
+        """
+        Backpropagation for the pooling layer.
+        
+        Parameters:
+        - dL_dOut: Gradient with respect to the output of the pooling layer.
+        
+        Returns:
+        - dL_dInput: Gradient with respect to the input of the pooling layer.
+        """
+        dL_dInput = np.zeros_like(self.input)
+
+        for f in range(self.input.shape[0]):  # Loop over each feature map
+            for i in range(0, self.feature_map_size, self.stride_size):
+                for j in range(0, self.feature_map_size, self.stride_size):
+                    receptive_field = self.input[f, i:i+self.filter_size, j:j+self.filter_size]
+                    if self.mode == PoolingMode.POOLING_MAX:
+                        max_val_position = np.unravel_index(receptive_field.argmax(), receptive_field.shape)
+                        dL_dInput[f, i+max_val_position[0], j+max_val_position[1]] = dL_dOut[f, i//self.stride_size, j//self.stride_size]
+                    elif self.mode == PoolingMode.POOLING_AVG:
+                        dL_dInput[f, i:i+self.filter_size, j:j+self.filter_size] += dL_dOut[f, i//self.stride_size, j//self.stride_size] / (self.filter_size**2)
+
+        return dL_dInput
