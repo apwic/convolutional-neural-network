@@ -5,7 +5,8 @@ class DenseLayer:
     def __init__(
         self,
         units: float,
-        activation_function: ActivationFunction
+        activation_function: ActivationFunction,
+        learning_rate: float = 0.01
     ) -> None:
         self.units = units
         self.activation_function = activation_function
@@ -18,6 +19,8 @@ class DenseLayer:
         self.delta_w = np.zeros((len(self.input), units))
         self.delta_b = np.zeros((1, units))
         self.net: np.ndarray = []
+
+        self.learning_rate = learning_rate
     
     def __str__(self):
         return f"\nDENSE LAYER\n--------\nInput: {self.input}\n\nOutput: {self.output}\n"
@@ -33,6 +36,9 @@ class DenseLayer:
 
     def setBiases(self, biases: np.ndarray):
         self.biases = biases
+
+    def setlearning_rate(self, learning_rate: float):
+        self.learning_rate = learning_rate
 
     def getOutput(self):
         return self.output
@@ -91,3 +97,14 @@ class DenseLayer:
         self.delta_b = (dE_dO * dO_dNet)
 
         return np.sum((self.delta_b * self.weights), axis=1)
+    
+    def update_weights_and_biases(self):
+        self.weights -= self.learning_rate * self.delta_w
+        self.biases -= self.learning_rate * self.delta_b
+
+    def reset(self):
+        self.output = []
+        #backprop attributes
+        self.delta_w = np.zeros((len(self.input), self.units))
+        self.delta_b = np.zeros((1, self.units))
+        self.net: np.ndarray = []

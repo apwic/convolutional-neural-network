@@ -82,3 +82,6 @@ class PoolingStage:
                         dL_dInput[f, i:i+self.filter_size, j:j+self.filter_size] += dL_dOut[f, i//self.stride_size, j//self.stride_size] / (self.filter_size**2)
 
         return dL_dInput
+    
+    def reset(self):
+        self.feature_maps = []

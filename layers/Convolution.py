@@ -14,18 +14,21 @@ class ConvolutionLayer:
         stride_size_conv: int = 1,
         stride_size_pool: int = 1,
         padding_size: int = 0,
-        mode: int = PoolingMode.POOLING_MAX # default mode MAX 
+        mode: int = PoolingMode.POOLING_MAX, # default mode MAX
+        learning_rate: float = 0.01
     ) -> None:
         self.convolutionStage: ConvolutionalStage = None
         self.detectorStage: DetectorStage = None
-        self.poolingStage: PoolingStage = None
+        self.poolingStage: PoolingStage = None\
 
-        self.setConvolutionStage(input_size, filter_size_conv, number_of_filter_conv, padding_size, stride_size_conv)
+        self.setConvolutionStage(input_size, filter_size_conv, number_of_filter_conv, learning_rate, padding_size, stride_size_conv)
         self.setDetectorStage()
         self.setPoolingStage(filter_size_pool, stride_size_pool, mode)
 
         self.input: np.ndarray = None
         self.output: np.ndarray = None
+
+        self.learning_rate = learning_rate
 
     def __str__(self) -> str:
         return f"\nCONVOLUTION LAYER\n--------\nInput: {self.input}\n\nOutput: {self.output}\n"
@@ -36,11 +39,15 @@ class ConvolutionLayer:
     def setWeights(self, weights: np.ndarray):
         self.convolutionStage.setParams(weights=weights)
 
+    def setlearning_rate(self, learning_rate: float):
+        self.learning_rate = learning_rate
+
     def setConvolutionStage(
         self,
         input_size: int,
         filter_size: int,
         number_of_filter: int,
+        learning_rate: float,
         padding_size: int = 0,
         stride_size: int = 1
     ):
@@ -49,7 +56,8 @@ class ConvolutionLayer:
             filter_size=filter_size,
             number_of_filter=number_of_filter,
             padding_size=padding_size,
-            stride_size=stride_size
+            stride_size=stride_size,
+            learning_rate=learning_rate
         )
 
         # randomize the params
@@ -94,12 +102,16 @@ class ConvolutionLayer:
 
     def backprop(self, dE_dIn):
         dE_dPooling = self.poolingStage.backprop(dE_dIn)
-        print(f"dE_dPooling:\n {dE_dPooling}\n")
         dE_dDetector = self.detectorStage.backprop(dE_dPooling)
-        print(f"dE_dDetector:\n {dE_dDetector}\n")
         dE_dConv = self.convolutionStage.backprop(dE_dDetector)
-        print(f"dE_dConv:\n {dE_dConv}\n")
-
-        print(f"dL_dFilter:\n{self.convolutionStage.delta_filters}\n")
 
         return dE_dConv
+    
+    def update_weights_and_biases(self):
+        self.convolutionStage.update_weights_and_biases()
+
+    def reset(self):
+        self.convolutionStage.reset()
+        self.detectorStage.reset()
+        self.poolingStage.reset()
+        self.output = None

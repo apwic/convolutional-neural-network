@@ -7,8 +7,6 @@ class FlattenLayer:
     ) -> None:
         self.input_size = input_size
         self.input: np.ndarray = None
-
-        self.output_size = input_size * input_size
         self.output: np.ndarray = None
 
     def __str__(self):
@@ -32,3 +30,6 @@ class FlattenLayer:
         dL_df = dL_dOut.reshape(self.input.shape) 
 
         return dL_df
+    
+    def reset(self):
+        self.output = None

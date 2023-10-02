@@ -7,7 +7,8 @@ class ConvolutionalStage:
         filter_size: int,
         number_of_filter: int,
         padding_size: int = 0,
-        stride_size: int = 1
+        stride_size: int = 1,
+        learning_rate: float = 0.01
     ) -> None:
         self.input_size = input_size
         self.input: np.ndarray = None
@@ -27,6 +28,8 @@ class ConvolutionalStage:
         # backprop attribute
         self.delta_filters = None
         self.delta_biases = None
+    
+        self.learning_rate = learning_rate
 
     def __str__(self) -> str:
         return f"\nCONVOLUTION STAGE\n--------\nInput: {self.input}\n\nOutput: {self.feature_maps}\n"
@@ -38,13 +41,13 @@ class ConvolutionalStage:
         return self.feature_maps
     
     def setParams(self, weights = np.ndarray):
-        self.filters = weights
+        self.filters = weights.astype(np.float64)
 
     def setBiases(self, biases = np.ndarray):
         self.biases = biases
 
     def resetParams(self):
-        self.filters = np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)
+        self.filters = (np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)).astype(np.float64)
 
     def addPadding(self):
         padded_inputs = np.zeros((self.input_size + 2 * self.padding_size, self.input_size + 2 * self.padding_size), dtype=float)
@@ -100,7 +103,7 @@ class ConvolutionalStage:
                         dL_dFilters[f] += dL_dOut[f, i, j] * receptive_field
 
         # Compute gradient with respect to biases
-        dL_dBiases = np.sum(dL_dOut, axis=(0, 1))
+        dL_dBiases = np.sum(dL_dOut, axis=(1, 2))
 
         # Compute gradient with respect to input
         for f in range(self.number_of_filter):
@@ -109,9 +112,19 @@ class ConvolutionalStage:
                     for j in range(0, self.input_size - self.filter_size + 1, self.stride_size):
                         dL_dInput[d, i:i+self.filter_size, j:j+self.filter_size] += dL_dOut[f, i//self.stride_size, j//self.stride_size] * self.filters[f]
 
-        
+
         # Store gradients for updating weights and biases
-        self.delta_filters = dL_dFilters
-        self.delta_biases = dL_dBiases
+        self.delta_filters = dL_dFilters.astype(np.float64)
+        self.delta_biases = dL_dBiases.astype(np.float64)
 
         return dL_dInput
+    
+    def update_weights_and_biases(self):
+        self.filters -= self.learning_rate * self.delta_filters.astype(np.float64)
+        self.biases -= self.learning_rate * self.delta_biases.astype(np.float64)
+
+    def reset(self):
+        self.feature_maps: np.ndarray = []
+        # backprop attribute
+        self.delta_filters = None
+        self.delta_biases = None
