@@ -1,4 +1,5 @@
 import numpy as np
+import json
 from layers.Convolution import ConvolutionLayer
 from layers.Flatten import FlattenLayer
 from layers.Dense import DenseLayer
@@ -17,7 +18,7 @@ class Sequential:
         self.batch_size: int = 1
         self.num_epochs: int = 1
 
-    def print_summary(self):
+    def printSummary(self):
         convo_count = 0
         dense_count = 0
         print("———————————————————————————————————————————————————————————————————————")
@@ -74,6 +75,33 @@ class Sequential:
         print("Trainable Params: {}".format(trainable_parameter))
         print("Non-trainable Params: {}".format(non_trainable_parameter))
         print()
+
+    def saveModel(self, filename):
+        file = open(f'./output/{filename}.json' , 'w')
+        data = []
+
+        for layer in self.conv_layers:
+            data += layer.getData()
+
+        data.append(self.flatten.getData())
+
+        for layer in self.dense_layers:
+            data.append(layer.getData())
+
+
+        file.write(json.dumps(data, indent=4))
+        file.close()
+        print("MODEL SAVED")
+
+    # TODO: set each layer from data read, now it is only fetching the data
+    def loadModel(self, filename):
+        file = open(f'./output/{filename}.json', 'r')
+
+        data = json.load(file)
+        file.close()
+
+        print("MODEL LOADED")
+        return  data
 
     def setInput(self, input: np.ndarray):
         self.input = input

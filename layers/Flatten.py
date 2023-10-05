@@ -20,6 +20,12 @@ class FlattenLayer:
     
     def getOutputShape(self):
         return len(self.input.ravel())
+    
+    def getData(self):
+        return {
+            "type": "flatten",
+            "params": {}
+        }
 
     def flatten(self):
         flattened_inputs = []

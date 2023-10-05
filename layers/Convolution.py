@@ -88,6 +88,23 @@ class ConvolutionLayer:
     
     def getParamsCount(self):
         return self.convolutionStage.getParamsCount()
+    
+    def getData(self):
+        pooling_stage = "max_pooling2d" if self.poolingStage.mode == PoolingMode.POOLING_MAX else "avg_pooling2d"
+
+        return [
+            {
+                "type": "conv2d",
+                "params": {
+                    "kernel": self.convolutionStage.filters.tolist(),
+                    "bias": self.convolutionStage.biases.tolist()
+                }
+            },
+            {
+                "type": pooling_stage,
+                "params": {}
+            }
+        ]
 
     def calculate(self):
         # Calculate for each stage and pass the output

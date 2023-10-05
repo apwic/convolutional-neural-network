@@ -48,6 +48,15 @@ class DenseLayer:
     
     def getParamsCount(self):
         return len(self.input) * self.units
+    
+    def getData(self):
+        return {
+            "type": "dense",
+            "params": {
+                "kernel": self.weights.tolist(),
+                "biases": self.biases.tolist()
+            }
+        }
 
     def relu(self, val, deriv=False):
         if (deriv):

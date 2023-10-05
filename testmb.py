@@ -70,7 +70,13 @@ def main():
     print(f"Conv Weight After:\n{model.conv_layers[0].convolutionStage.filters}\n")
     print(f"Conv Bias After:\n{model.conv_layers[0].convolutionStage.biases}\n")
     
-    model.print_summary()
+    model.printSummary()
+    model.saveModel('test')
+
+    data = model.loadModel('test')
+    
+    for d in data:
+        print(d)
 
 if __name__ == "__main__":
     main()
