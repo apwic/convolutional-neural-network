@@ -82,6 +82,12 @@ class ConvolutionLayer:
 
     def getOutput(self):
         return self.output
+    
+    def getOutputShape(self):
+        return self.poolingStage.getOutputShape()
+    
+    def getParamsCount(self):
+        return self.convolutionStage.getParamsCount()
 
     def calculate(self):
         # Calculate for each stage and pass the output

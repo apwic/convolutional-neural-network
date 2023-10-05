@@ -37,9 +37,6 @@ class ConvolutionalStage:
     def setInput(self, input: np.ndarray) :
         self.input = input
 
-    def getOutput(self):
-        return self.feature_maps
-    
     def setParams(self, weights = np.ndarray):
         self.filters = weights.astype(np.float64)
 
@@ -48,6 +45,12 @@ class ConvolutionalStage:
 
     def resetParams(self):
         self.filters = (np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)).astype(np.float64)
+
+    def getOutput(self):
+        return self.feature_maps
+    
+    def getParamsCount(self):
+        return self.number_of_filter * ((self.filter_size * self.filter_size * self.input.shape[0]) + 1)
 
     def addPadding(self):
         padded_inputs = np.zeros((self.input_size + 2 * self.padding_size, self.input_size + 2 * self.padding_size), dtype=float)

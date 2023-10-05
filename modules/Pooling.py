@@ -30,6 +30,9 @@ class PoolingStage:
 
     def getOutput(self):
         return self.feature_maps
+    
+    def getOutputShape(self):
+        return (self.input.shape[0], self.feature_map_size, self.feature_map_size)
 
     def poolingMax(self, input):
         return np.max(input)

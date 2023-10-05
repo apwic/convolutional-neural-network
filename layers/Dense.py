@@ -42,6 +42,12 @@ class DenseLayer:
 
     def getOutput(self):
         return self.output
+    
+    def getOutputShape(self):
+        return (1, self.units)
+    
+    def getParamsCount(self):
+        return len(self.input) * self.units
 
     def relu(self, val, deriv=False):
         if (deriv):

@@ -17,6 +17,9 @@ class FlattenLayer:
 
     def getOutput(self):
         return self.output
+    
+    def getOutputShape(self):
+        return len(self.input.ravel())
 
     def flatten(self):
         flattened_inputs = []

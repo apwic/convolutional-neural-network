@@ -69,6 +69,8 @@ def main():
     print(f"Dense Bias After:\n{model.dense_layers[0].biases}\n")
     print(f"Conv Weight After:\n{model.conv_layers[0].convolutionStage.filters}\n")
     print(f"Conv Bias After:\n{model.conv_layers[0].convolutionStage.biases}\n")
+    
+    model.print_summary()
 
 if __name__ == "__main__":
     main()
