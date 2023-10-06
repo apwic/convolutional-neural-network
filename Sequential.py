@@ -140,7 +140,7 @@ class Sequential:
             # Handle other layer types (max_pooling2d, flatten) if needed
 
         print("MODEL LOADED")
-        # self.printSummary()
+        self.printSummary()
 
     def setInput(self, input: np.ndarray):
         self.input = input
@@ -176,8 +176,8 @@ class Sequential:
         self.dense_layers.append(layer)
         self.total_layers += 1
 
-    def forwardProp(self):
-        curr_input = self.input
+    def forwardProp(self, input):
+        curr_input = input
         for layer in self.conv_layers:
             layer.setInput(curr_input)
             layer.calculate()
@@ -193,10 +193,9 @@ class Sequential:
             curr_input = layer.getOutput()
         
         self.output = curr_input
-        print(f"OUTPUT LAYER\n--------\n\nOutput: {self.output}\n")
 
-    def backwardProp(self):
-        dL_dFlattenedOutput = self.targets
+    def backwardProp(self, target):
+        dL_dFlattenedOutput = target
         output_layer = True
         for layer in reversed(self.dense_layers):
             if (output_layer):
@@ -225,28 +224,39 @@ class Sequential:
         return input_batches, target_batches
 
     def train(self):
-        j = 0
         for i in range(self.num_epochs):
-            print(f"\n\nEPOCH KE-{i}")
+            print(f"\n\nEPOCH KE-{i+1}")
             input_batches, target_batches = self.create_mini_batches()
+            j = 0
             for batch_inputs, batch_targets in zip(input_batches, target_batches):
-                print(f"------------------------\nBATCH KE-{j}\n------------------------")
-                for input_sample, _ in zip(batch_inputs, batch_targets):
-                    self.setInput(input_sample[np.newaxis, :])
-                    self.forwardProp()
-                    self.backwardProp()
+                print(f"------------------------\nBATCH KE-{j+1}\n------------------------")
+                for input_sample, target_sample in zip(batch_inputs, batch_targets):
+                    self.forwardProp(input_sample)
+                    self.backwardProp(target_sample)
+                    print(f"\nOUTPUT LAYER\n------------------------\nOutput: {self.output}\t\tTarget: {target_sample}\n")
+                    self.resetOutput()
                 for dense_layers in self.dense_layers:
                     dense_layers.update_weights_and_biases()
                 for conv_layers in self.conv_layers:
                     conv_layers.update_weights_and_biases()
 
-                self.reset()
+                self.resetAll()
+                j += 1
 
-    def reset(self):
+    def resetOutput(self):
         for conv in self.conv_layers:
-            conv.reset()
+            conv.resetOutput()
 
-        self.flatten.reset()
+        self.flatten.resetOutput()
 
         for dense in self.dense_layers:
-            dense.reset()
+            dense.resetOutput()
+
+    def resetAll(self):
+        for conv in self.conv_layers:
+            conv.resetAll()
+
+        self.flatten.resetOutput()
+
+        for dense in self.dense_layers:
+            dense.resetAll()

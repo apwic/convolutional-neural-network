@@ -32,7 +32,7 @@ class FlattenLayer:
     def flatten(self):
         flattened_inputs = []
         for feature_map in self.input:
-            for i in range(0, self.num_of_input):
+            for i in range(0, self.input_size):
                 flattened_inputs.append(feature_map[i])
                 
         self.output = np.concatenate(flattened_inputs)
@@ -42,5 +42,5 @@ class FlattenLayer:
 
         return dL_df
     
-    def reset(self):
+    def resetOutput(self):
         self.output = None

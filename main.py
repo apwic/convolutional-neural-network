@@ -1,31 +1,73 @@
-from enums.enums import ActivationFunction, PoolingMode
+from enums.enums import ActivationFunction, PoolingMode, DenseLayerType
 from layers.Convolution import ConvolutionLayer
 from layers.Dense import DenseLayer
 from layers.Flatten import FlattenLayer
 from Sequential import Sequential
-from utils.ImageToMatrix import ImageToMatrix
+from utils.ImageToMatrix import getTrainDataset, getTestDataset
 import numpy as np
 
-def main() :
-    inputMatr = ImageToMatrix()
-    inputMatr = np.transpose(inputMatr, (2, 1, 0))
-
-    print("Input:")
-
-    # Create the Convolution Layer
-    convLayer = ConvolutionLayer(input_size=256, 
-                                 filter_size_conv=4,
-                                 number_of_filter_conv=2,
-                                 filter_size_pool=3
-                                 )
-
-    denseLayer1 = DenseLayer(1, ActivationFunction.RELU)
-
+def main():
     model = Sequential()
-    model.setInput(inputMatr)
-    model.addConvLayer(convLayer)
-    model.addDenseLayer(denseLayer1)
-    model.forwardProp()
+    train_X, train_y, val_X, val_y = getTrainDataset(split_ratio=0.9)
+    test_X, test_y = getTestDataset()
 
-if __name__ == "__main__":
+    conv_layer1 = ConvolutionLayer(
+        num_of_input=3,
+        input_size=256,
+        filter_size_conv=4,
+        number_of_filter_conv=3,
+        filter_size_pool=4,
+        stride_size_conv=4,
+        stride_size_pool=4,
+        padding_size=0,
+        mode=PoolingMode.POOLING_MAX
+    )
+
+    conv_layer2 = ConvolutionLayer(
+        num_of_input=3,
+        input_size=conv_layer1.getOutputShape()[1],
+        filter_size_conv=4,
+        number_of_filter_conv=6,
+        filter_size_pool=4,
+        stride_size_conv=1,
+        stride_size_pool=1,
+        padding_size=0,
+        mode=PoolingMode.POOLING_AVG,
+    )
+
+    model.addConvLayer(conv_layer1)
+    model.addConvLayer(conv_layer2)
+    model.addDenseLayer(DenseLayer(
+        units=300,
+        activation_function=ActivationFunction.SIGMOID
+    ))
+    model.addDenseLayer(DenseLayer(
+        units=150,
+        activation_function=ActivationFunction.SIGMOID
+    ))
+    model.addDenseLayer(DenseLayer(
+        units=50,
+        activation_function=ActivationFunction.SIGMOID
+    ))
+    model.addDenseLayer(DenseLayer(
+        units=25,
+        activation_function=ActivationFunction.SIGMOID
+    ))
+    model.addDenseLayer(DenseLayer(
+        units=5,
+        activation_function=ActivationFunction.SIGMOID
+    ))
+    model.addDenseLayer(DenseLayer(
+        units=1,
+        activation_function=ActivationFunction.RELU
+    ))
+    model.printSummary()
+
+    model.setInput(train_X[:5])
+    model.setTargets(train_y[:5])
+    model.setBatchSize(1)
+    model.setNumEpochs(5)
+    model.train()
+    
+if __name__ == '__main__':
     main()

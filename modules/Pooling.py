@@ -90,5 +90,5 @@ class PoolingStage:
 
         return dL_dInput
     
-    def reset(self):
+    def resetOutput(self):
         self.feature_maps = []

@@ -37,7 +37,10 @@ class ConvolutionalStage:
         return f"\nCONVOLUTION STAGE\n--------\nInput: {self.input}\n\nOutput: {self.feature_maps}\n"
 
     def setInput(self, input: np.ndarray) :
+        self.num_of_input = input.shape[0]
+        self.input_size = input[0].shape[0]
         self.input = input
+        self.feature_map_size = (self.input_size - self.filter_size + 2 * self.padding_size) // self.stride_size + 1
 
     def setParams(self, weights = np.ndarray):
         self.filters = weights.astype(np.float64)
@@ -52,7 +55,7 @@ class ConvolutionalStage:
         return self.feature_maps
     
     def getOutputShape(self):
-        return (self.filter_size, self.feature_map_size)
+        return (self.number_of_filter, self.feature_map_size)
     
     def getParamsCount(self):
         return self.number_of_filter * ((self.filter_size * self.filter_size * self.num_of_input) + 1)
@@ -104,18 +107,18 @@ class ConvolutionalStage:
 
         # Compute gradient with respect to filters
         for f in range(self.number_of_filter):
-            for d in range(self.input.shape[0]):
-                for i in range(0, self.input_size - self.filter_size + 1):
-                    for j in range(0, self.input_size - self.filter_size + 1):
+            for d in range(self.num_of_input):
+                for i in range(0, self.input_size - self.filter_size + 1, self.stride_size):
+                    for j in range(0, self.input_size - self.filter_size + 1, self.stride_size):
                         receptive_field = self.input[d, i:i+self.filter_size, j:j+self.filter_size]
-                        dL_dFilters[f] += dL_dOut[f, i, j] * receptive_field
+                        dL_dFilters[f] += dL_dOut[f, i//self.stride_size, j//self.stride_size] * receptive_field
 
         # Compute gradient with respect to biases
         dL_dBiases = np.sum(dL_dOut, axis=(1, 2))
 
         # Compute gradient with respect to input
         for f in range(self.number_of_filter):
-            for d in range(self.input.shape[0]):
+            for d in range(self.num_of_input):
                 for i in range(0, self.input_size - self.filter_size + 1, self.stride_size):
                     for j in range(0, self.input_size - self.filter_size + 1, self.stride_size):
                         dL_dInput[d, i:i+self.filter_size, j:j+self.filter_size] += dL_dOut[f, i//self.stride_size, j//self.stride_size] * self.filters[f]
@@ -131,7 +134,10 @@ class ConvolutionalStage:
         self.filters -= self.learning_rate * self.delta_filters.astype(np.float64)
         self.biases -= self.learning_rate * self.delta_biases.astype(np.float64)
 
-    def reset(self):
+    def resetOutput(self):
+        self.feature_map: np.ndarray = []
+
+    def resetAll(self):
         self.feature_maps: np.ndarray = []
         # backprop attribute
         self.delta_filters = None

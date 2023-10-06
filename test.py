@@ -8,12 +8,23 @@ import numpy as np
 
 def main():
     # Mock input image of shape 4x4
-    input_image = np.array([[
-        [1, 2, 3, 4],
-        [5, 6, 7, 8],
-        [9, 10, 11, 12],
-        [13, 14, 15, 16]
-    ]])
+    input_image = np.array(
+    [
+        [
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9, 10, 11, 12],
+            [13, 14, 15, 16]
+        ],
+        [
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9, 10, 11, 12],
+            [13, 14, 15, 16]
+        ]
+    ])
+
+    print(input_image.shape)
 
     target = np.array([0.5, 0.8, 0.3])
 
@@ -21,7 +32,7 @@ def main():
 
     # Convolution Layer
     convLayer = ConvolutionLayer(
-        num_of_input=1,
+        num_of_input=2,
         input_size=4,
         filter_size_conv=2,
         number_of_filter_conv=2,
@@ -57,7 +68,7 @@ def main():
     denseLayer.setBiases(mock_biases)
 
     batch_size = 1
-    num_epochs = 5
+    num_epochs = 2
     learning_rate = 0.1
 
     model.addConvLayer(convLayer)
@@ -75,8 +86,8 @@ def main():
     print(f"Conv Weight After:\n{model.conv_layers[0].convolutionStage.filters}\n")
     print(f"Conv Bias After:\n{model.conv_layers[0].convolutionStage.biases}\n")
     
-    model.saveModel('test')
-    model.loadModel('test')
+    # model.saveModel('test')
+    # model.loadModel('test')
     
 if __name__ == "__main__":
     main()

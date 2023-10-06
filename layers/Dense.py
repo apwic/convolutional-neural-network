@@ -32,6 +32,7 @@ class DenseLayer:
     def setInput(self, input: np.ndarray):
         self.input = input.ravel()
         self.input_size = len(self.input)
+        self.delta_w = np.zeros((len(input.ravel()), self.units))
 
         if (len(self.weights) == 0):
             self.weights: np.ndarray = np.random.rand(len(input.ravel()), self.units)
@@ -125,7 +126,10 @@ class DenseLayer:
         self.weights -= self.learning_rate * self.delta_w
         self.biases -= self.learning_rate * self.delta_b
 
-    def reset(self):
+    def resetOutput(self):
+        self.output = []
+
+    def resetAll(self):
         self.output = []
         #backprop attributes
         self.delta_w = np.zeros((len(self.input), self.units))

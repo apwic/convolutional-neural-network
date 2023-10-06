@@ -41,5 +41,5 @@ class DetectorStage:
         dL_dInput = dL_dOut * self.activation_function(self.input, deriv=True)
         return dL_dInput
 
-    def reset(self):
+    def resetOutput(self):
         self.feature_maps = []

@@ -1,5 +1,6 @@
 import os
 import random
+import numpy as np
 from numpy import asarray
 from PIL import Image
 
@@ -22,7 +23,7 @@ labels = {
 def ImageToMatrix(path):
     img = Image.open(path)
     img_array = asarray(img)
-    return img_array
+    return np.transpose(img_array, (2, 1, 0))
 
 def getTrainDataset(split_ratio = 0.8):
     all_train_data = []
@@ -48,10 +49,10 @@ def getTrainDataset(split_ratio = 0.8):
     split_ratio = 0.8
     split_idx = int(len(all_train_data) * split_ratio)
     
-    train_data_X = [item[0] for item in all_train_data[:split_idx]]
-    train_data_y = [item[1] for item in all_train_data[:split_idx]]
-    val_data_X = [item[0] for item in all_train_data[split_idx:]]
-    val_data_y = [item[1] for item in all_train_data[split_idx:]]
+    train_data_X = np.array([item[0] for item in all_train_data[:split_idx]])
+    train_data_y = np.array([item[1] for item in all_train_data[:split_idx]])
+    val_data_X = np.array([item[0] for item in all_train_data[split_idx:]])
+    val_data_y = np.array([item[1] for item in all_train_data[split_idx:]])
 
     return train_data_X, train_data_y, val_data_X, val_data_y
 
@@ -71,8 +72,8 @@ def getTestDataset():
         # Extend the test_data list
         test_data.extend(labeled_files)
 
-    test_data_X = [item[0] for item in test_data]
-    test_data_y = [item[1] for item in test_data]
+    test_data_X = np.array([item[0] for item in test_data])
+    test_data_y = np.array([item[1] for item in test_data])
 
     return test_data_X, test_data_y
 
@@ -80,4 +81,4 @@ if __name__ == '__main__':
     # TODO: gimana caranya ini masuk cuk ke sekwensial kt
     train_data_X, train_data_y, val_data_X, val_data_y = getTrainDataset()
 
-    print(train_data_X)
+    print(len(train_data_X[0]))

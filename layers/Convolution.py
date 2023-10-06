@@ -129,15 +129,14 @@ class ConvolutionLayer:
         # Calculate for each stage and pass the output
         self.convolutionStage.setInput(self.input)
         self.convolutionStage.calculate()
-        print(self.convolutionStage)
+        print(self.convolutionStage.getOutputShape())
 
         self.detectorStage.setInput(self.convolutionStage.getOutput())
         self.detectorStage.calculate()
-        print(self.detectorStage)
 
         self.poolingStage.setInput(self.detectorStage.getOutput())
         self.poolingStage.calculate()
-        print(self.poolingStage)
+        print(self.poolingStage.getOutputShape())
 
         # Set the output from pooling stage
         self.output = self.poolingStage.getOutput()
@@ -152,8 +151,14 @@ class ConvolutionLayer:
     def update_weights_and_biases(self):
         self.convolutionStage.update_weights_and_biases()
 
-    def reset(self):
-        self.convolutionStage.reset()
-        self.detectorStage.reset()
-        self.poolingStage.reset()
+    def resetOutput(self):
+        self.convolutionStage.resetOutput()
+        self.detectorStage.resetOutput()
+        self.poolingStage.resetOutput()
+        self.output = None
+
+    def resetAll(self):
+        self.convolutionStage.resetAll()
+        self.detectorStage.resetOutput()
+        self.poolingStage.resetOutput()
         self.output = None
