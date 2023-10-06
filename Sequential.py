@@ -88,7 +88,6 @@ class Sequential:
         for layer in self.dense_layers:
             data.append(layer.getData())
 
-
         file.write(json.dumps(data, indent=4))
         file.close()
         print("MODEL SAVED")
