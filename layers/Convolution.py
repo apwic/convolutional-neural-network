@@ -7,6 +7,7 @@ from modules.Pooling import PoolingStage
 class ConvolutionLayer:
     def __init__(
         self,
+        num_of_input: int,
         input_size: int,
         filter_size_conv: int,
         number_of_filter_conv: int,
@@ -19,11 +20,13 @@ class ConvolutionLayer:
     ) -> None:
         self.convolutionStage: ConvolutionalStage = None
         self.detectorStage: DetectorStage = None
-        self.poolingStage: PoolingStage = None\
+        self.poolingStage: PoolingStage = None
 
-        self.setConvolutionStage(input_size, filter_size_conv, number_of_filter_conv, learning_rate, padding_size, stride_size_conv)
+        self.setConvolutionStage(num_of_input, input_size, filter_size_conv, number_of_filter_conv, learning_rate, padding_size, stride_size_conv)
         self.setDetectorStage()
-        self.setPoolingStage(filter_size_pool, stride_size_pool, mode)
+
+        pooling_num_of_input, pooling_input_size = self.convolutionStage.getOutputShape()
+        self.setPoolingStage(pooling_num_of_input, pooling_input_size, filter_size_pool, stride_size_pool, mode)
 
         self.input: np.ndarray = None
         self.output: np.ndarray = None
@@ -39,11 +42,12 @@ class ConvolutionLayer:
     def setWeights(self, weights: np.ndarray):
         self.convolutionStage.setParams(weights=weights)
 
-    def setlearning_rate(self, learning_rate: float):
+    def setLearningRate(self, learning_rate: float):
         self.learning_rate = learning_rate
 
     def setConvolutionStage(
         self,
+        num_of_input: int,
         input_size: int,
         filter_size: int,
         number_of_filter: int,
@@ -52,6 +56,7 @@ class ConvolutionLayer:
         stride_size: int = 1
     ):
         self.convolutionStage = ConvolutionalStage(
+            num_of_input=num_of_input,
             input_size=input_size,
             filter_size=filter_size,
             number_of_filter=number_of_filter,
@@ -70,11 +75,15 @@ class ConvolutionLayer:
 
     def setPoolingStage(
         self,
+        num_of_input: int,
+        input_size: int,
         filter_size: int,
         stride_size: int = 1,
         mode: int = PoolingMode.POOLING_MAX # default mode MAX
     ):
         self.poolingStage = PoolingStage(
+            num_of_input=num_of_input,
+            input_size=input_size,
             filter_size=filter_size,
             stride_size=stride_size,
             mode=mode
@@ -96,6 +105,7 @@ class ConvolutionLayer:
             {
                 "type": "conv2d",
                 "params": {
+                    "num_of_input": self.convolutionStage.num_of_input,
                     "input_size": self.convolutionStage.input_size,
                     "filter_size_conv": self.convolutionStage.filter_size,
                     "number_of_filter_conv": self.convolutionStage.number_of_filter,

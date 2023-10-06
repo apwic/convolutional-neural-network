@@ -93,7 +93,6 @@ class Sequential:
         file.close()
         print("MODEL SAVED")
 
-    # TODO: set each layer from data read, now it is only fetching the data
     def loadModel(self, filename):
         file = open(f'./output/{filename}.json', 'r')
 
@@ -112,6 +111,7 @@ class Sequential:
             if layer_type == "conv2d":
                 params = layer_data["params"]
                 convLayer = ConvolutionLayer(
+                    num_of_input=params["num_of_input"],
                     input_size=params["input_size"],
                     filter_size_conv=params["filter_size_conv"],
                     number_of_filter_conv=params["number_of_filter_conv"],
@@ -155,17 +155,25 @@ class Sequential:
     def setNumEpochs(self, numEpochs: int):
         self.num_epochs = numEpochs
 
-    def setlearning_rate(self, learning_rate: float):
+    def setLearningRate(self, learning_rate: float):
         for conv_layer in self.conv_layers:
-            conv_layer.setlearning_rate(learning_rate)
+            conv_layer.setLearningRate(learning_rate)
         for dense_layer in self.dense_layers:
-            dense_layer.setlearning_rate(learning_rate)
+            dense_layer.setLearningRate(learning_rate)
 
     def addConvLayer(self, layer: ConvolutionLayer):
         self.conv_layers.append(layer)
         self.total_layers += 1
 
+        num_of_input, input_size, _ = layer.poolingStage.getOutputShape()
+        self.flatten = FlattenLayer(num_of_input, input_size)
+
     def addDenseLayer(self, layer: DenseLayer):
+        if (len(self.dense_layers) == 0):
+            layer.setInputSize(self.flatten.getOutputShape())
+        else:
+            layer.setInputSize(self.dense_layers[-1].getOutputShape()[1])
+
         self.dense_layers.append(layer)
         self.total_layers += 1
 
@@ -176,7 +184,6 @@ class Sequential:
             layer.calculate()
             curr_input = layer.getOutput()
 
-        self.flatten = FlattenLayer(len(curr_input[0]))
         self.flatten.setInput(curr_input)
         self.flatten.flatten()
         curr_input = self.flatten.output

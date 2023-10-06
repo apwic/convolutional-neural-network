@@ -4,13 +4,16 @@ from enums.enums import PoolingMode
 class PoolingStage:
     def __init__(
         self,
+        num_of_input: int,
+        input_size: int,
         filter_size: int,
         stride_size: int = 1,
         mode: int = PoolingMode.POOLING_MAX, # default mode MAX
         input: np.ndarray = None
     ) -> None:
         self.input: np.ndarray = input
-        self.input_size = input[0].shape[0] if self.input else 0
+        self.input_size = input_size
+        self.num_of_input = num_of_input
         
         self.filter_size = filter_size
         self.stride_size = stride_size
@@ -25,6 +28,7 @@ class PoolingStage:
 
     def setInput(self, input):
         self.input = input
+        self.num_of_input = input.shape[0]
         self.input_size = input[0].shape[0]
         self.feature_map_size = (self.input_size - self.filter_size) // self.stride_size + 1
 
@@ -32,7 +36,7 @@ class PoolingStage:
         return self.feature_maps
     
     def getOutputShape(self):
-        return (self.input.shape[0], self.feature_map_size, self.feature_map_size)
+        return (self.num_of_input, self.feature_map_size, self.feature_map_size)
 
     def poolingMax(self, input):
         return np.max(input)

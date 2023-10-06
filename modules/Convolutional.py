@@ -3,6 +3,7 @@ import numpy as np
 class ConvolutionalStage: 
     def __init__(
         self,
+        num_of_input: int,
         input_size: int,
         filter_size: int,
         number_of_filter: int,
@@ -10,6 +11,7 @@ class ConvolutionalStage:
         stride_size: int = 1,
         learning_rate: float = 0.01
     ) -> None:
+        self.num_of_input = num_of_input
         self.input_size = input_size
         self.input: np.ndarray = None
 
@@ -49,8 +51,11 @@ class ConvolutionalStage:
     def getOutput(self):
         return self.feature_maps
     
+    def getOutputShape(self):
+        return (self.filter_size, self.feature_map_size)
+    
     def getParamsCount(self):
-        return self.number_of_filter * ((self.filter_size * self.filter_size * self.input.shape[0]) + 1)
+        return self.number_of_filter * ((self.filter_size * self.filter_size * self.num_of_input) + 1)
 
     def addPadding(self):
         padded_inputs = np.zeros((self.input_size + 2 * self.padding_size, self.input_size + 2 * self.padding_size), dtype=float)

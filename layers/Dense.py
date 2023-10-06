@@ -10,6 +10,7 @@ class DenseLayer:
     ) -> None:
         self.units = units
         self.activation_function = activation_function
+        self.input_size: None
         self.input: np.ndarray = []
         self.output: np.ndarray = []
         self.weights: np.ndarray = []
@@ -25,8 +26,12 @@ class DenseLayer:
     def __str__(self):
         return f"\nDENSE LAYER\n--------\nInput: {self.input}\n\nOutput: {self.output}\n"
     
+    def setInputSize(self, input_size):
+        self.input_size = input_size
+
     def setInput(self, input: np.ndarray):
         self.input = input.ravel()
+        self.input_size = len(self.input)
 
         if (len(self.weights) == 0):
             self.weights: np.ndarray = np.random.rand(len(input.ravel()), self.units)
@@ -37,7 +42,7 @@ class DenseLayer:
     def setBiases(self, biases: np.ndarray):
         self.biases = biases
 
-    def setlearning_rate(self, learning_rate: float):
+    def setLearningRate(self, learning_rate: float):
         self.learning_rate = learning_rate
 
     def getOutput(self):
@@ -47,7 +52,7 @@ class DenseLayer:
         return (1, self.units)
     
     def getParamsCount(self):
-        return len(self.input) * self.units
+        return self.input_size * self.units
     
     def getData(self):
         return {
