@@ -96,6 +96,15 @@ class ConvolutionLayer:
             {
                 "type": "conv2d",
                 "params": {
+                    "input_size": self.convolutionStage.input_size,
+                    "filter_size_conv": self.convolutionStage.filter_size,
+                    "number_of_filter_conv": self.convolutionStage.number_of_filter,
+                    "filter_size_pool": self.poolingStage.filter_size,
+                    "stride_size_conv": self.convolutionStage.stride_size,
+                    "stride_size_pool": self.poolingStage.stride_size,
+                    "padding_size": self.convolutionStage.padding_size,
+                    "mode": str(self.poolingStage.mode),
+                    "learning_rate": self.learning_rate,
                     "kernel": self.convolutionStage.filters.tolist(),
                     "bias": self.convolutionStage.biases.tolist()
                 }

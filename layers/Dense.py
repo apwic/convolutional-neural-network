@@ -53,6 +53,9 @@ class DenseLayer:
         return {
             "type": "dense",
             "params": {
+                "units": self.units,
+                "activation_function": str(self.activation_function),
+                "learning_rate": self.learning_rate,
                 "kernel": self.weights.tolist(),
                 "biases": self.biases.tolist()
             }

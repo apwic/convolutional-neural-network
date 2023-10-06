@@ -100,8 +100,48 @@ class Sequential:
         data = json.load(file)
         file.close()
 
+        # clear the current model's layers
+        self.conv_layers = []
+        self.dense_layers = []
+
+        # loop through the loaded data and reconstruct the layers
+        for layer_data in data:
+            layer_type = layer_data["type"]
+            
+            # Add convolutional layer
+            if layer_type == "conv2d":
+                params = layer_data["params"]
+                convLayer = ConvolutionLayer(
+                    input_size=params["input_size"],
+                    filter_size_conv=params["filter_size_conv"],
+                    number_of_filter_conv=params["number_of_filter_conv"],
+                    filter_size_pool=params["filter_size_pool"],
+                    stride_size_conv=params["stride_size_conv"],
+                    stride_size_pool=params["stride_size_pool"],
+                    padding_size=params["padding_size"],
+                    mode=params["mode"],
+                    learning_rate=params["learning_rate"],
+                )
+                convLayer.setWeights(np.array(params["kernel"]))
+                convLayer.convolutionStage.setBiases(np.array(params["bias"]))
+                self.addConvLayer(convLayer)
+            
+            # Add dense layer
+            elif layer_type == "dense":
+                params = layer_data["params"]
+                denseLayer = DenseLayer(
+                    units=params["units"],
+                    activation_function=params["activation_function"],
+                    learning_rate=params["learning_rate"],
+                )
+                denseLayer.setWeight(np.array(params["kernel"]))
+                denseLayer.setBiases(np.array(params["biases"]))
+                self.addDenseLayer(denseLayer)
+            
+            # Handle other layer types (max_pooling2d, flatten) if needed
+
         print("MODEL LOADED")
-        return  data
+        # self.printSummary()
 
     def setInput(self, input: np.ndarray):
         self.input = input
