@@ -69,8 +69,6 @@ class ConvolutionalStage:
         
         self.input = padded_inputs
 
-        print(self.input)
-
     def convolve(self, input, filter, bias) :
         feature_map = np.zeros((self.feature_map_size, self.feature_map_size), dtype=float)
 

@@ -129,15 +129,13 @@ class ConvolutionLayer:
         # Calculate for each stage and pass the output
         self.convolutionStage.setInput(self.input)
         self.convolutionStage.calculate()
-        print(self.convolutionStage.getOutputShape())
 
         self.detectorStage.setInput(self.convolutionStage.getOutput())
         self.detectorStage.calculate()
 
         self.poolingStage.setInput(self.detectorStage.getOutput())
         self.poolingStage.calculate()
-        print(self.poolingStage.getOutputShape())
-
+        
         # Set the output from pooling stage
         self.output = self.poolingStage.getOutput()
 
