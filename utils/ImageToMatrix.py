@@ -45,8 +45,6 @@ def getTrainDataset(split_ratio = 0.8):
     # Shuffle the combined training data
     random.shuffle(all_train_data)
 
-    # Splitting data (let's say you want to split the training data into 80% train and 20% validation)
-    split_ratio = 0.8
     split_idx = int(len(all_train_data) * split_ratio)
     
     train_data_X = np.array([item[0] for item in all_train_data[:split_idx]])
@@ -78,7 +76,6 @@ def getTestDataset():
     return test_data_X, test_data_y
 
 if __name__ == '__main__':
-    # TODO: gimana caranya ini masuk cuk ke sekwensial kt
     train_data_X, train_data_y, val_data_X, val_data_y = getTrainDataset()
 
     print(len(train_data_X[0]))

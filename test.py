@@ -24,7 +24,6 @@ def main():
         ]
     ])
 
-    print(input_image.shape)
 
     target = np.array([0.5, 0.8, 0.3])
 

@@ -62,6 +62,8 @@ class PoolingStage:
     def calculate(self):
         for input in self.input:
             feature_map = self.convolve(input)
+            if (type(self.feature_maps) is np.ndarray):
+                self.feature_maps = self.feature_maps.tolist()
             self.feature_maps.append(feature_map)
 
         self.feature_maps = np.array(self.feature_maps)

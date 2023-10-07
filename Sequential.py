@@ -14,8 +14,14 @@ class Sequential:
         self.input: np.ndarray = None
         self.output: np.ndarray = None
 
+        self.input_batch: np.ndarray = None
+        self.target_batch: np.ndarray = None
+
         self.test_input: np.ndarray = None
         self.test_target: np.ndarray = None
+
+        self.validation_input: np.ndarray = None
+        self.validation_target: np.ndarray = None
 
         self.targets: np.ndarray = None
         self.batch_size: int = 1
@@ -155,6 +161,10 @@ class Sequential:
         self.test_input = input
         self.test_target = target
 
+    def setValidation(self, input: np.ndarray, target: np.ndarray):
+        self.validation_input = input
+        self.validation_target = target
+
     def setBatchSize(self, batchSize: int):
         self.batch_size = batchSize
 
@@ -218,37 +228,92 @@ class Sequential:
         
     def create_mini_batches(self):
         # shuffle inputs and targets in unison
-        indices = np.arange(self.input.shape[0])
+        indices = np.arange(self.input_batch.shape[0])
         np.random.shuffle(indices)
-        inputs_shuffled = self.input[indices]
+        inputs_shuffled = self.input_batch[indices]
         targets_shuffled = self.targets[indices]
 
         # split into mini-batches
-        num_batches = self.input.shape[0] // self.batch_size
+        num_batches = self.input_batch.shape[0] // self.batch_size
         input_batches = np.array_split(inputs_shuffled, num_batches)
         target_batches = np.array_split(targets_shuffled, num_batches)
 
         return input_batches, target_batches
+    
+    def create_k_folds(self, k=10):
+        indices = np.arange(self.input.shape[0])
+        np.random.shuffle(indices)
+        
+        inputs_shuffled = self.input[indices]
+        targets_shuffled = self.targets[indices]
 
-    def train(self):
-        for i in range(self.num_epochs):
-            print(f"\n\nEPOCH KE-{i+1}")
-            input_batches, target_batches = self.create_mini_batches()
-            j = 0
-            for batch_inputs, batch_targets in zip(input_batches, target_batches):
-                print(f"------------------------\nBATCH KE-{j+1}\n------------------------")
-                for input_sample, target_sample in zip(batch_inputs, batch_targets):
-                    self.forwardProp(input_sample)
-                    self.backwardProp(target_sample)
-                    print(f"\nOUTPUT LAYER\n------------------------\nOutput: {self.output}\t\tTarget: {target_sample}\n")
-                    self.resetOutput()
-                for dense_layers in self.dense_layers:
-                    dense_layers.update_weights_and_biases()
-                for conv_layers in self.conv_layers:
-                    conv_layers.update_weights_and_biases()
+        input_folds = np.array_split(inputs_shuffled, k)
+        target_folds = np.array_split(targets_shuffled, k)
+        
+        return input_folds, target_folds
+    
+    def train_and_test(self, k=10):
+        self.train(k)
 
+        # Now test on the 10% test set
+        correct_predictions = 0
+        for input_sample, target_sample in zip(self.validation_input, self.validation_target):
+            self.forwardProp(input_sample)
+            prediction = 1 if self.output >= 0.5 else 0
+            if prediction == target_sample:
+                correct_predictions += 1
+        accuracy = correct_predictions / len(self.validation_input)
+        print(f"\nTest Accuracy on the 10% Test Set: {accuracy * 100:.2f}%")
+
+    def train(self, k=10):
+        input_folds, target_folds = self.create_k_folds(k)
+
+        # Store validation performances for each fold
+        fold_performances = []
+
+        for fold_idx in range(k):
+            print(f"Training on Fold {fold_idx + 1}/{k}")
+            validation_input = input_folds[fold_idx]
+            validation_target = target_folds[fold_idx]
+
+            self.input_batch = np.concatenate([input_folds[i] for i in range(k) if i != fold_idx])
+            self.target_batch = np.concatenate([target_folds[i] for i in range(k) if i != fold_idx])
+            
+            for i in range(self.num_epochs):
+                print(f"\n\nEPOCH KE-{i+1}")
+                input_batches, target_batches = self.create_mini_batches()
+                j = 0
+                for batch_inputs, batch_targets in zip(input_batches, target_batches):
+                    print(f"------------------------\nBATCH KE-{j+1}\n------------------------")
+                    for input_sample, target_sample in zip(batch_inputs, batch_targets):
+                        self.forwardProp(input_sample)
+                        self.backwardProp(target_sample)
+                        print(f"\nOUTPUT LAYER\n------------------------\nOutput: {self.output}\t\tTarget: {target_sample}\n")
+                        self.resetOutput()
+                    for dense_layers in self.dense_layers:
+                        dense_layers.update_weights_and_biases()
+                    for conv_layers in self.conv_layers:
+                        conv_layers.update_weights_and_biases()
+
+                    self.resetAll()
+                    j += 1
+                    
+            self.resetAll()
+            correct_predictions = 0
+            for input_sample, target_sample in zip(validation_input, validation_target):
+                self.forwardProp(input_sample)
+                prediction = 1 if self.output >= 0.5 else 0
+                if prediction == target_sample:
+                    correct_predictions += 1
                 self.resetAll()
-                j += 1
+            accuracy = correct_predictions / len(validation_input)
+            fold_performances.append(accuracy)
+            print(f"Fold {fold_idx + 1} Validation Accuracy: {accuracy * 100:.2f}%")
+            self.resetAll()
+
+        avg_performance = np.mean(fold_performances)
+        print(f"\nAverage Validation Accuracy: {avg_performance * 100:.2f}%")
+        self.resetAll()
 
     def test(self):
         i = 1

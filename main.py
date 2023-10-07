@@ -63,10 +63,11 @@ def main():
     ))
     model.printSummary()
 
-    model.setInput(train_X[:5])
-    model.setTargets(train_y[:5])
+    model.setInput(train_X[:30])
+    model.setTargets(train_y[:30])
+    model.setValidation(val_X[:30], val_y[:30])
     model.setTest(test_X[:5], test_y[:5])
-    model.setBatchSize(1)
+    model.setBatchSize(10)
     model.setNumEpochs(5)
     model.train()
 
