@@ -25,7 +25,7 @@ def ImageToMatrix(path):
     img_array = asarray(img)
     return np.transpose(img_array, (2, 1, 0))
 
-def getTrainDataset(split_ratio = 0.8):
+def getTrainDataset():
     all_train_data = []
 
     # Collect training data
@@ -45,14 +45,11 @@ def getTrainDataset(split_ratio = 0.8):
     # Shuffle the combined training data
     random.shuffle(all_train_data)
 
-    split_idx = int(len(all_train_data) * split_ratio)
     
-    train_data_X = np.array([item[0] for item in all_train_data[:split_idx]])
-    train_data_y = np.array([item[1] for item in all_train_data[:split_idx]])
-    val_data_X = np.array([item[0] for item in all_train_data[split_idx:]])
-    val_data_y = np.array([item[1] for item in all_train_data[split_idx:]])
+    train_data_X = np.array([item[0] for item in all_train_data])
+    train_data_y = np.array([item[1] for item in all_train_data])
 
-    return train_data_X, train_data_y, val_data_X, val_data_y
+    return train_data_X, train_data_y
 
 def getTestDataset():
     # Collect test data

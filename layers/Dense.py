@@ -35,7 +35,7 @@ class DenseLayer:
         self.delta_w = np.zeros((len(input.ravel()), self.units))
 
         if (len(self.weights) == 0):
-            self.weights: np.ndarray = np.random.rand(len(input.ravel()), self.units)
+            self.weights = np.random.randn(len(input.ravel()), self.units) * np.sqrt(2. / len(input.ravel()))
 
     def setWeight(self, weights: np.ndarray):
         self.weights = weights
@@ -74,10 +74,10 @@ class DenseLayer:
         return np.maximum(0, val)
     
     def sigmoid(self, val, deriv=False):
+        val = np.clip(val, -709, 709)  # Clip values to avoid overflow
         if (deriv):
             sigmoid_x = 1 / (1 + np.exp(-val))
             return sigmoid_x * (1 - sigmoid_x)
-        
         return 1 / (1 + np.exp(-val))
 
     def forward(self):
@@ -93,6 +93,11 @@ class DenseLayer:
 
     def dE_dO(self, target):
         return (-(target - self.output))
+    
+    def dE_dO_BCE(self, y_true):
+        epsilon = 1e-15  # to prevent division by zero
+        y_pred = np.clip(self.output, epsilon, 1 - epsilon)
+        return -(y_true / y_pred) + (1 - y_true) / (1 - y_pred)
 
     def dO_dNet(self, net):
         if (self.activation_function == ActivationFunction.RELU):
@@ -103,7 +108,7 @@ class DenseLayer:
             raise ValueError("Activation function out of tubes scope yeah")
 
     def backprop_output(self, target):
-        dE_dO = self.dE_dO(target)
+        dE_dO = self.dE_dO_BCE(target)
         dO_dNet = self.dO_dNet(self.net)
         dNet_dW = self.input
 

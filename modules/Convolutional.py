@@ -40,6 +40,10 @@ class ConvolutionalStage:
         self.num_of_input = input.shape[0]
         self.input_size = input[0].shape[0]
         self.input = input
+        
+        if (self.padding_size > 0):
+            self.addPadding()
+        
         self.feature_map_size = (self.input_size - self.filter_size + 2 * self.padding_size) // self.stride_size + 1
 
     def setParams(self, weights = np.ndarray):
@@ -49,7 +53,7 @@ class ConvolutionalStage:
         self.biases = biases
 
     def resetParams(self):
-        self.filters = (np.random.randn(self.number_of_filter, self.filter_size, self.filter_size)).astype(np.float64)
+        self.filters = np.random.randn(self.number_of_filter, self.filter_size, self.filter_size) * np.sqrt(2. / self.filter_size * self.filter_size)
 
     def getOutput(self):
         return self.feature_maps
@@ -61,12 +65,14 @@ class ConvolutionalStage:
         return self.number_of_filter * ((self.filter_size * self.filter_size * self.num_of_input) + 1)
 
     def addPadding(self):
-        padded_inputs = np.zeros((self.input_size + 2 * self.padding_size, self.input_size + 2 * self.padding_size), dtype=float)
+        num_channels = self.input.shape[0]
+        padded_inputs = np.zeros((num_channels, self.input_size + 2 * self.padding_size, self.input_size + 2 * self.padding_size), dtype=float)
 
-        for i in range(0, self.input_size):
-            for j in range(0, self.input_size):
-                padded_inputs[i + self.padding_size][j + self.padding_size] = self.input[i][j]
-        
+        for c in range(num_channels):
+            for i in range(self.input_size):
+                for j in range(self.input_size):
+                    padded_inputs[c, i + self.padding_size, j + self.padding_size] = self.input[c, i, j]
+            
         self.input = padded_inputs
 
     def convolve(self, input, filter, bias) :

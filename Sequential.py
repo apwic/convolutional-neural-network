@@ -27,6 +27,12 @@ class Sequential:
         self.batch_size: int = 1
         self.num_epochs: int = 1
 
+    def print_separator(self, title=None, width=79):
+        print("=" * width)
+        if title:
+            print(title.center(width))
+        print("=" * width)
+
     def printSummary(self):
         convo_count = 0
         dense_count = 0
@@ -177,6 +183,12 @@ class Sequential:
         for dense_layer in self.dense_layers:
             dense_layer.setLearningRate(learning_rate)
 
+    def binary_cross_entropy(self, y_true, y_pred):
+        epsilon = 1e-15  # to prevent log(0)
+        y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
+        loss = - (y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
+        return loss
+
     def addConvLayer(self, layer: ConvolutionLayer):
         self.conv_layers.append(layer)
         self.total_layers += 1
@@ -272,7 +284,7 @@ class Sequential:
         fold_performances = []
 
         for fold_idx in range(k):
-            print(f"Training on Fold {fold_idx + 1}/{k}")
+            self.print_separator(f"Training on Fold {fold_idx + 1}/{k}")
             validation_input = input_folds[fold_idx]
             validation_target = target_folds[fold_idx]
 
@@ -280,15 +292,13 @@ class Sequential:
             self.target_batch = np.concatenate([target_folds[i] for i in range(k) if i != fold_idx])
             
             for i in range(self.num_epochs):
-                print(f"\n\nEPOCH KE-{i+1}")
+                print(f"\nEPOCH KE-{i+1}")
                 input_batches, target_batches = self.create_mini_batches()
                 j = 0
                 for batch_inputs, batch_targets in zip(input_batches, target_batches):
-                    print(f"------------------------\nBATCH KE-{j+1}\n------------------------")
                     for input_sample, target_sample in zip(batch_inputs, batch_targets):
                         self.forwardProp(input_sample)
                         self.backwardProp(target_sample)
-                        print(f"\nOUTPUT LAYER\n------------------------\nOutput: {self.output}\t\tTarget: {target_sample}\n")
                         self.resetOutput()
                     for dense_layers in self.dense_layers:
                         dense_layers.update_weights_and_biases()
@@ -308,11 +318,11 @@ class Sequential:
                 self.resetAll()
             accuracy = correct_predictions / len(validation_input)
             fold_performances.append(accuracy)
-            print(f"Fold {fold_idx + 1} Validation Accuracy: {accuracy * 100:.2f}%")
+            print(f"\nFold {fold_idx + 1} Validation Accuracy: {accuracy * 100:.2f}%\n")
             self.resetAll()
 
         avg_performance = np.mean(fold_performances)
-        print(f"\nAverage Validation Accuracy: {avg_performance * 100:.2f}%")
+        self.print_separator(f"Average Validation Accuracy: {avg_performance * 100:.2f}%")
         self.resetAll()
 
     def test(self):
@@ -324,7 +334,7 @@ class Sequential:
         correct_predictions = 0
     
         for input_sample, target_sample in zip(self.test_input, self.test_target):
-            print(f"------------------------\PENGUJIAN KE-{i}\n------------------------")
+            print(f"------------------------PENGUJIAN KE-{i}------------------------")
             self.forwardProp(input_sample)
             
             prediction = 1 if self.output >= 0.5 else 0
