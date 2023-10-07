@@ -9,7 +9,13 @@ import numpy as np
 train_X, train_y = getTrainDataset()
 test_X, test_y = getTestDataset()
 
-def main():
+def createModel(load_file = None):
+    if (load_file != None):
+        model = Sequential()
+        model.loadModel(load_file)
+
+        return model
+
     model = Sequential()
 
     conv_layer1 = ConvolutionLayer(
@@ -50,23 +56,16 @@ def main():
         units=1,
         activation_function=ActivationFunction.SIGMOID
     ))
-    model.printSummary()
+    
+    return model
 
-    model.setLearningRate(0.1)
-    model.setInput(train_X[:10])
-    model.setTargets(train_y[:10])
-    model.setTest(test_X[:10], test_y[:10])
-    model.setBatchSize(5)
-    model.setNumEpochs(2)
+def run(model, *, num, epoch, batch_size):
+    model.setLearningRate(0.01)
+    model.setInput(train_X[:num])
+    model.setTargets(train_y[:num])
+    model.setTest(test_X, test_y)
+    model.setBatchSize(batch_size)
+    model.setNumEpochs(epoch)
+
     model.train()
-
-    model.test()
-
-    model.saveModel('main')
-    
-if __name__ == '__main__':
-    
-    model = Sequential()
-    model.loadModel('main')
-    model.setTest(test_X[:10], test_y[:10])
     model.test()

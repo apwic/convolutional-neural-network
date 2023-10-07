@@ -1,5 +1,8 @@
 import numpy as np
 import json
+import itertools
+import matplotlib.pyplot as plt
+from enums.enums import ActivationFunction
 from layers.Convolution import ConvolutionLayer
 from layers.Flatten import FlattenLayer
 from layers.Dense import DenseLayer
@@ -143,9 +146,16 @@ class Sequential:
             # Add dense layer
             elif layer_type == "dense":
                 params = layer_data["params"]
+                activation_function = ActivationFunction.RELU
+
+                if (params["activation_function"] == "ActivationFunction.RELU"):
+                    activation_function = ActivationFunction.RELU
+                if (params["activation_function"] == "ActivationFunction.SIGMOID"):
+                    activation_function = ActivationFunction.SIGMOID
+
                 denseLayer = DenseLayer(
                     units=params["units"],
-                    activation_function=params["activation_function"],
+                    activation_function=activation_function,
                     learning_rate=params["learning_rate"],
                 )
                 denseLayer.setWeight(np.array(params["kernel"]))
@@ -362,6 +372,31 @@ class Sequential:
 
         print("Confusion Matrix:")
         print(confusion_matrix)
+        self.plot_confusion_matrix(confusion_matrix, classes=['0', '1'], title='Confusion Matrix')
+
+    def plot_confusion_matrix(self, cm, classes, title='Confusion Matrix', cmap=plt.cm.Blues):
+        """
+        This function prints and plots the confusion matrix.
+        """
+        plt.imshow(cm, interpolation='nearest', cmap=cmap)
+        plt.title(title)
+        plt.colorbar()
+        tick_marks = np.arange(len(classes))
+        plt.xticks(tick_marks, classes, rotation=45)
+        plt.yticks(tick_marks, classes)
+
+        fmt = 'd'
+        cm = np.array(cm)
+        thresh = cm.max() / 2.
+        for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+            plt.text(j, i, format(cm[i, j], fmt),
+                    horizontalalignment="center",
+                    color="white" if cm[i, j] > thresh else "black")
+
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+        plt.tight_layout()
+        plt.show()
 
     def resetOutput(self):
         for conv in self.conv_layers:
