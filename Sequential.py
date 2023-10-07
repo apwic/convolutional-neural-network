@@ -317,6 +317,10 @@ class Sequential:
 
     def test(self):
         i = 1
+        tp = 0
+        tn = 0
+        fp = 0
+        fn = 0
         correct_predictions = 0
     
         for input_sample, target_sample in zip(self.test_input, self.test_target):
@@ -325,8 +329,16 @@ class Sequential:
             
             prediction = 1 if self.output >= 0.5 else 0
             
-            if prediction == target_sample:
-                correct_predictions += 1
+            if prediction == target_sample and target_sample == 0 :
+                tn += 1
+            elif prediction == target_sample and target_sample == 1 :
+                tp += 1
+            elif prediction != target_sample and target_sample == 0 :
+                fp += 1
+            else :
+                fn += 1
+
+            correct_predictions = tp + tn
                 
             print(f"\nHasil Prediksi: {self.output}\tKelas Target: {target_sample}")
             print(f"Correct Predictions so far: {correct_predictions} / {i}\n")
@@ -335,7 +347,11 @@ class Sequential:
         
         accuracy = correct_predictions / len(self.test_input)
         print(f"\nTest Accuracy: {accuracy * 100:.2f}%")
-        return
+
+        confusion_matrix = [[tn, fp], [fn, tp]]
+
+        print("Confusion Matrix:")
+        print(confusion_matrix)
 
     def resetOutput(self):
         for conv in self.conv_layers:

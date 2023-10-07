@@ -68,7 +68,7 @@ def main():
     model.setValidation(val_X[:30], val_y[:30])
     model.setTest(test_X[:5], test_y[:5])
     model.setBatchSize(10)
-    model.setNumEpochs(5)
+    model.setNumEpochs(1)
     model.train()
 
     model.test()
