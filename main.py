@@ -15,6 +15,7 @@ def main():
     training_group.add_argument("-e", "--epochs", type=int, default=3, help="Number of epochs")
     training_group.add_argument("-b", "--batch_size", type=int, default=5, help="Batch size")
     training_group.add_argument("-n", "--num_samples", type=int, default=10, help="Length of split dataset")
+    training_group.add_argument("-lr", "--learning_rate", type=float, default=0.01, help="Length of split dataset")
     
     # Group for model management
     model_group = run_parser.add_argument_group("Model Management")
@@ -32,7 +33,8 @@ def main():
         kwargs = {
             'num': args.num_samples,
             'epoch': args.epochs,
-            'batch_size': args.batch_size
+            'batch_size': args.batch_size,
+            'learning_rate': args.learning_rate
         }
 
         helper.run(model=model, **kwargs)

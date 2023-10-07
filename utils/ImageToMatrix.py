@@ -44,7 +44,6 @@ def getTrainDataset():
 
     # Shuffle the combined training data
     random.shuffle(all_train_data)
-
     
     train_data_X = np.array([item[0] for item in all_train_data])
     train_data_y = np.array([item[1] for item in all_train_data])

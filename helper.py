@@ -59,8 +59,8 @@ def createModel(load_file = None):
     
     return model
 
-def run(model, *, num, epoch, batch_size):
-    model.setLearningRate(0.01)
+def run(model, *, num, epoch, batch_size, learning_rate):
+    model.setLearningRate(learning_rate)
     model.setInput(train_X[:num])
     model.setTargets(train_y[:num])
     model.setTest(test_X, test_y)
