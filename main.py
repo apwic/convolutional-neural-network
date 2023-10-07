@@ -25,10 +25,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "run":
-        if hasattr(args, 'l') and args.l:
-            model = helper.createModel(load_file=args.l)
-        else:
-            model = helper.createModel()
+        model = helper.createModel(args.load)
 
         kwargs = {
             'num': args.num_samples,
@@ -39,8 +36,8 @@ def main():
 
         helper.run(model=model, **kwargs)
         
-        if hasattr(args, 's') and args.s:
-            model.saveModel(filename=args.s)
+        if args.save != None:
+            model.saveModel(filename=args.save)
 
 if __name__ == "__main__":
     main()
