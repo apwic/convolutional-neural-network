@@ -39,19 +39,19 @@ def main():
     model.addConvLayer(conv_layer2)
     model.addDenseLayer(DenseLayer(
         units=300,
-        activation_function=ActivationFunction.SIGMOID
+        activation_function=ActivationFunction.RELU
     ))
     model.addDenseLayer(DenseLayer(
         units=150,
-        activation_function=ActivationFunction.SIGMOID
+        activation_function=ActivationFunction.RELU
     ))
     model.addDenseLayer(DenseLayer(
         units=50,
-        activation_function=ActivationFunction.SIGMOID
+        activation_function=ActivationFunction.RELU
     ))
     model.addDenseLayer(DenseLayer(
         units=25,
-        activation_function=ActivationFunction.SIGMOID
+        activation_function=ActivationFunction.RELU
     ))
     model.addDenseLayer(DenseLayer(
         units=5,
@@ -59,15 +59,18 @@ def main():
     ))
     model.addDenseLayer(DenseLayer(
         units=1,
-        activation_function=ActivationFunction.RELU
+        activation_function=ActivationFunction.SIGMOID
     ))
     model.printSummary()
 
     model.setInput(train_X[:5])
     model.setTargets(train_y[:5])
+    model.setTest(test_X[:5], test_y[:5])
     model.setBatchSize(1)
     model.setNumEpochs(5)
     model.train()
+
+    model.test()
     
 if __name__ == '__main__':
     main()

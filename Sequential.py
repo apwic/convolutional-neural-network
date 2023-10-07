@@ -14,6 +14,9 @@ class Sequential:
         self.input: np.ndarray = None
         self.output: np.ndarray = None
 
+        self.test_input: np.ndarray = None
+        self.test_target: np.ndarray = None
+
         self.targets: np.ndarray = None
         self.batch_size: int = 1
         self.num_epochs: int = 1
@@ -148,6 +151,10 @@ class Sequential:
     def setTargets(self, targets: np.ndarray):
         self.targets = targets
 
+    def setTest(self, input: np.ndarray, target: np.ndarray):
+        self.test_input = input
+        self.test_target = target
+
     def setBatchSize(self, batchSize: int):
         self.batch_size = batchSize
 
@@ -242,6 +249,28 @@ class Sequential:
 
                 self.resetAll()
                 j += 1
+
+    def test(self):
+        i = 1
+        correct_predictions = 0
+    
+        for input_sample, target_sample in zip(self.test_input, self.test_target):
+            print(f"------------------------\PENGUJIAN KE-{i}\n------------------------")
+            self.forwardProp(input_sample)
+            
+            prediction = 1 if self.output >= 0.5 else 0
+            
+            if prediction == target_sample:
+                correct_predictions += 1
+                
+            print(f"\nHasil Prediksi: {self.output}\tKelas Target: {target_sample}")
+            print(f"Correct Predictions so far: {correct_predictions} / {i}\n")
+            self.resetAll()
+            i += 1
+        
+        accuracy = correct_predictions / len(self.test_input)
+        print(f"\nTest Accuracy: {accuracy * 100:.2f}%")
+        return
 
     def resetOutput(self):
         for conv in self.conv_layers:
